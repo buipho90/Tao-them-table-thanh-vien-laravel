@@ -132,4 +132,115 @@ Tiếp theo ta vào app/Http/Kernel.php để thêm dòng sau
    'thanhvien' => \App\Http\Middleware\RedirectIfNotThanhvien::class,
  ];
 ```
-    
+Tiếp theo tạo Controller cho member ví dụ mình tạo như này ```php artisan make:controller MemberControler```
+
+### Trong đó mình khai báo nhu sau
+```PHP
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+
+class MemberLoginControler extends Controller
+{
+    use AuthenticatesUsers;
+
+    protected $redirectTo = '/profile-thanh-vien';
+
+    /**
+     **_ Create a new controller instance.
+     _**
+     **_ @return void
+     _**/
+    public function __construct()
+    {
+      $this->middleware('guest')->except('logout');
+    }
+    /**
+     _
+     _ @return property guard use for login
+     _
+     **/
+    public function guard()
+    {
+     return Auth::guard('thanhvien');
+    }
+
+    // login from for teacher
+    public function showLoginForm()
+    {
+        return view('frontend.login');
+    }
+
+}
+```
+
+### Ok giờ phần Route mình khai báo như sau
+```PHP
+Route::get('/thanh-vien/login', 'MemberLoginControler@showLoginForm')->name('thanhvien.login');
+Route::post('/thanh-vien/login', 'MemberLoginControler@login')->name('thanhvien.login.post');
+Route::post('/thanh-vien/logout', 'MemberLoginControler@logout')->name('thanhvien.logout');
+
+
+Route::group(['middleware'=>'thanhvien'], function() {
+    Route::get('/thanh-vien/home', 'MemberLoginControler@index');
+});
+```
+### Gio tạo form đăng nhap login.blade.php
+```PHP
+<form class="form-horizontal" method="POST" action="{{ route('thanhvien.login.post') }}">
+    {{ csrf_field() }}
+
+    <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+        <label for="email" class="col-md-4 control-label">E-Mail Address</label>
+
+        <div class="col-md-6">
+            <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required autofocus>
+
+            @if ($errors->has('email'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('email') }}</strong>
+                </span>
+            @endif
+        </div>
+    </div>
+
+    <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+        <label for="password" class="col-md-4 control-label">Password</label>
+
+        <div class="col-md-6">
+            <input id="password" type="password" class="form-control" name="password" required>
+
+            @if ($errors->has('password'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('password') }}</strong>
+                </span>
+            @endif
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-6 col-md-offset-4">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="remember"> Remember Me
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-8 col-md-offset-4">
+            <button type="submit" class="btn btn-primary">
+                Login
+            </button>
+
+        </div>
+    </div>
+</form>
+```
+
+## Chúc cả nhà thành công
