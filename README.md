@@ -41,11 +41,7 @@ class Thanhvien extends Authenticatable
         'guard' => 'web',
         'passwords' => 'users',
     ],
-    // sau khi thêm
-    'thanhvien'  => [
-          'driver'  => 'eloquent',
-          'provider' => \App\Thanhvien::class,
-    ],
+  
     // kéo xuong sua tiep
     'guards' => [
         'web' => [
@@ -54,7 +50,7 @@ class Thanhvien extends Authenticatable
         ],
         'thanhvien'  => [
             'driver'  => 'session',
-             'provider' => 'thanhvien',
+             'provider' => 'thanhviens',
         ],
 
 
@@ -64,12 +60,12 @@ class Thanhvien extends Authenticatable
         ],
     ],
     
-    'providers' => [
+  'providers' => [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
         ],
-        'thanhvien' => [
+        'thanhviens' => [
             'driver' => 'eloquent',
             'model' => \App\Thanhvien::class,
         ],
@@ -80,18 +76,7 @@ class Thanhvien extends Authenticatable
         // ],
     ],
     
-    'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => 'password_resets',
-            'expire' => 60,
-        ],
-        'thanhvien' => [
-            'provider' => 'thanhvien',
-            'table' => 'password_resets',
-            'expire' => 60,
-        ],
-    ],
+   
 ```
 
 ### 4. Tiếp theo tạo ```middleware``` với câu lệnh như sau: ```php artisan make:middleware RedirectIfNotThanhvien```
@@ -164,7 +149,11 @@ class MemberLoginControler extends Controller
     
     public function showLoginForm()
     {
-        return view('frontend.login');
+        if (!\Auth::guard('thanhvien')->check()) {
+            return redirect()->route("frontend.login");
+        }
+        // check thử xem đã đăng nhap chua
+        return redirect('/');
     }
 
 }
