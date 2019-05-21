@@ -2,9 +2,9 @@
 Cách tạo thêm tabale thành viên
 Để tạo thêm table thành vi nữa trong laravel ta làm như sau: Ví dụ mặc định trong laravel có table là users nhưng ta muốn tạo thêm table khác nữa là members thì làm như sau:
 
-**1. Ta nhân bản table users ra thành members**
+### 1. Ta nhân bản table users ra thành members
 
-**2. Ta tạo model cho table member như sau: **
+### 2. Ta tạo model cho table member như sau: 
 
 *php artisan make:model Thanhvien* 
 
@@ -35,7 +35,7 @@ class Thanhvien extends Authenticatable
 
 }
 ```
-Ok giờ ta vào ```config/auth.php``` để thêm phần sau:
+### 3. Ok giờ ta vào ```config/auth.php``` để thêm phần sau:
 ```PHP
 'defaults' => [
         'guard' => 'web',
@@ -94,7 +94,7 @@ Ok giờ ta vào ```config/auth.php``` để thêm phần sau:
     ],
 ```
 
-Tiếp theo tạo ```middleware``` với câu lệnh như sau: ```php artisan make:middleware RedirectIfNotThanhvien```
+### 4. Tiếp theo tạo ```middleware``` với câu lệnh như sau: ```php artisan make:middleware RedirectIfNotThanhvien```
 
 
 Sau tạo xong và ta sửa lại được như thế này
@@ -125,14 +125,14 @@ class RedirectIfNotThanhvien
 }
 ```
 
-Tiếp theo ta vào app/Http/Kernel.php để thêm dòng sau   
+### 5. Tiếp theo ta vào app/Http/Kernel.php để thêm dòng sau   
 ```PHP
  protected $routeMiddleware = [
    ......
    'thanhvien' => \App\Http\Middleware\RedirectIfNotThanhvien::class,
  ];
 ```
-Tiếp theo tạo Controller cho member ví dụ mình tạo như này ```php artisan make:controller MemberControler```
+### 6. Tiếp theo tạo Controller cho member ví dụ mình tạo như này ```php artisan make:controller MemberControler```
 
 ### Trong đó mình khai báo nhu sau
 ```PHP
@@ -154,7 +154,7 @@ class MemberLoginControler extends Controller
      **_ Create a new controller instance.
      _**
      **_ @return void
-     _**/
+     **/
     public function __construct()
     {
       $this->middleware('guest')->except('logout');
@@ -178,7 +178,7 @@ class MemberLoginControler extends Controller
 }
 ```
 
-### Ok giờ phần Route mình khai báo như sau
+### 7. Ok giờ phần Route mình khai báo như sau
 ```PHP
 Route::get('/thanh-vien/login', 'MemberLoginControler@showLoginForm')->name('thanhvien.login');
 Route::post('/thanh-vien/login', 'MemberLoginControler@login')->name('thanhvien.login.post');
@@ -189,7 +189,7 @@ Route::group(['middleware'=>'thanhvien'], function() {
     Route::get('/thanh-vien/home', 'MemberLoginControler@index');
 });
 ```
-### Gio tạo form đăng nhap login.blade.php
+### 8. Gio tạo form đăng nhap login.blade.php
 ```PHP
 <form class="form-horizontal" method="POST" action="{{ route('thanhvien.login.post') }}">
     {{ csrf_field() }}
