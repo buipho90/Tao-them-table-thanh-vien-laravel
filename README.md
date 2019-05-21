@@ -150,26 +150,18 @@ class MemberLoginControler extends Controller
 
     protected $redirectTo = '/profile-thanh-vien';
 
-    /**
-     **_ Create a new controller instance.
-     _**
-     **_ @return void
-     **/
+    
     public function __construct()
     {
       $this->middleware('guest')->except('logout');
     }
-    /**
-     _
-     _ @return property guard use for login
-     _
-     **/
+    
     public function guard()
     {
      return Auth::guard('thanhvien');
     }
 
-    // login from for teacher
+    
     public function showLoginForm()
     {
         return view('frontend.login');
