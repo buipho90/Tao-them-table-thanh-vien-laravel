@@ -93,3 +93,43 @@ Ok giờ ta vào ```config/auth.php``` để thêm phần sau:
         ],
     ],
 ```
+
+Tiếp theo tạo ```middleware``` với câu lệnh như sau: ```php artisan make:middleware RedirectIfNotThanhvien```
+
+
+Sau tạo xong và ta sửa lại được như thế này
+
+```PHP
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+
+class RedirectIfNotThanhvien
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    public function handle($request, Closure $next, $guard="thanhvien")
+    {
+        if(!auth()->guard($guard)->check()) {
+            return redirect(route('frontend.login'));
+        }
+        return $next($request);
+    }
+}
+```
+
+Tiếp theo ta vào app/Http/Kernel.php để thêm dòng sau   
+```PHP
+ protected $routeMiddleware = [
+   ......
+   'thanhvien' => \App\Http\Middleware\RedirectIfNotThanhvien::class,
+ ];
+```
+    
