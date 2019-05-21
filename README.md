@@ -35,3 +35,61 @@ class Thanhvien extends Authenticatable
 
 }
 ```
+Ok giờ ta vào ```config/auth.php``` để thêm phần sau:
+```PHP
+'defaults' => [
+        'guard' => 'web',
+        'passwords' => 'users',
+    ],
+    // sau khi thêm
+    'thanhvien'  => [
+          'driver'  => 'eloquent',
+          'provider' => \App\Thanhvien::class,
+    ],
+    // kéo xuong sua tiep
+    'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+        'thanhvien'  => [
+            'driver'  => 'session',
+             'provider' => 'thanhvien',
+        ],
+
+
+        'api' => [
+            'driver' => 'token',
+            'provider' => 'users',
+        ],
+    ],
+    
+    'providers' => [
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\User::class,
+        ],
+        'thanhvien' => [
+            'driver' => 'eloquent',
+            'model' => \App\Thanhvien::class,
+        ],
+
+        // 'users' => [
+        //     'driver' => 'database',
+        //     'table' => 'users',
+        // ],
+    ],
+    
+    'passwords' => [
+        'users' => [
+            'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+        'thanhvien' => [
+            'provider' => 'thanhvien',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+    ],
+```
